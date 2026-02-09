@@ -1,0 +1,17 @@
+63f7b34db8d8cdea90c76aacccf841ec
+::res://::1770600568
+AGENTS.md::TextFile::-1::1770593195::0::1::::<><><>0<>0<><>::
+claude.md::TextFile::-1::1770593195::0::1::::<><><>0<>0<><>::
+icon.svg::CompressedTexture2D::5038195925400976678::1770583262::1770583935::1::::<><><>0<>0<>e74bf381a35f99d200dadcc208e8459c<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
+::res://resources/::1770585853
+::res://resources/shaders/::1770585929
+chess_board_background.gdshader::Shader::4711386348698611150::1770586493::0::1::::<><><>0<>0<><>::
+::res://scenes/::1770599680
+game.tscn::PackedScene::236236::1770599680::0::1::::<><><>0<>0<><>::res://scripts/game.gd<>res://resources/shaders/chess_board_background.gdshader
+king_select.tscn::PackedScene::-1::1770593430::0::1::::<><><>0<>0<><>::res://scripts/king_select.gd<>res://resources/shaders/chess_board_background.gdshader
+menu.tscn::PackedScene::476734::1770591124::0::1::::<><><>0<>0<><>::res://scripts/menu.gd<>res://resources/shaders/chess_board_background.gdshader
+::res://scripts/::1770593011
+game.gd::GDScript::1982644703235620283::1770600550::0::1::::<>Control<><>0<>0<><>::
+game_data.gd::GDScript::5469212221012367345::1770593430::0::1::::<>Node<><>0<>0<><>::
+king_select.gd::GDScript::7017137391194983142::1770593430::0::1::::<>Control<><>0<>0<><>::
+menu.gd::GDScript::7009748843626871954::1770587859::0::1::::<>Control<><>0<>0<><>::

@@ -1,0 +1,244 @@
+[gd_scene load_steps=4 format=3 uid="uid://king_select"]
+
+[ext_resource type="Script" path="res://scripts/king_select.gd" id="1"]
+[ext_resource type="Shader" path="res://resources/shaders/chess_board_background.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("2")
+shader_parameter/color_light = Color(0.15, 0.15, 0.18, 1)
+shader_parameter/color_dark = Color(0.1, 0.1, 0.13, 1)
+shader_parameter/tile_count = 10.0
+shader_parameter/scroll_speed = Vector2(0.03, 0.03)
+
+[node name="KingSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_bg")
+color = Color(1, 1, 1, 1)
+
+[node name="SafeMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 60
+
+[node name="Layout" type="VBoxContainer" parent="SafeMargin"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 0
+
+[node name="TopSpacer" type="Control" parent="SafeMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="Title" type="Label" parent="SafeMargin/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Choose Your King"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleSpacer" type="Control" parent="SafeMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="Cards" type="HBoxContainer" parent="SafeMargin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="GoodCard" type="PanelContainer" parent="SafeMargin/Layout/Cards"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+
+[node name="GoodContent" type="VBoxContainer" parent="SafeMargin/Layout/Cards/GoodCard"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="GoodIcon" type="Label" parent="SafeMargin/Layout/Cards/GoodCard/GoodContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "♔"
+horizontal_alignment = 1
+
+[node name="GoodName" type="Label" parent="SafeMargin/Layout/Cards/GoodCard/GoodContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "The Good"
+horizontal_alignment = 1
+
+[node name="GoodPoints" type="Label" parent="SafeMargin/Layout/Cards/GoodCard/GoodContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.75, 0.1, 1)
+horizontal_alignment = 1
+
+[node name="GoodEffect" type="Label" parent="SafeMargin/Layout/Cards/GoodCard/GoodContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.5, 0.7, 1.0, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="GoodFlavor" type="Label" parent="SafeMargin/Layout/Cards/GoodCard/GoodContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Noble & balanced.
+Steady in all ways."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="GoodPadding" type="Control" parent="SafeMargin/Layout/Cards/GoodCard/GoodContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="BadCard" type="PanelContainer" parent="SafeMargin/Layout/Cards"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+
+[node name="BadContent" type="VBoxContainer" parent="SafeMargin/Layout/Cards/BadCard"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="BadIcon" type="Label" parent="SafeMargin/Layout/Cards/BadCard/BadContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "♚"
+horizontal_alignment = 1
+
+[node name="BadName" type="Label" parent="SafeMargin/Layout/Cards/BadCard/BadContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "The Bad"
+horizontal_alignment = 1
+
+[node name="BadPoints" type="Label" parent="SafeMargin/Layout/Cards/BadCard/BadContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.75, 0.1, 1)
+horizontal_alignment = 1
+
+[node name="BadEffect" type="Label" parent="SafeMargin/Layout/Cards/BadCard/BadContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.5, 0.7, 1.0, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="BadFlavor" type="Label" parent="SafeMargin/Layout/Cards/BadCard/BadContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Ruthless & aggressive.
+Power at any cost."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="BadPadding" type="Control" parent="SafeMargin/Layout/Cards/BadCard/BadContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="UglyCard" type="PanelContainer" parent="SafeMargin/Layout/Cards"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+
+[node name="UglyContent" type="VBoxContainer" parent="SafeMargin/Layout/Cards/UglyCard"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="UglyIcon" type="Label" parent="SafeMargin/Layout/Cards/UglyCard/UglyContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "⚜"
+horizontal_alignment = 1
+
+[node name="UglyName" type="Label" parent="SafeMargin/Layout/Cards/UglyCard/UglyContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "The Ugly"
+horizontal_alignment = 1
+
+[node name="UglyPoints" type="Label" parent="SafeMargin/Layout/Cards/UglyCard/UglyContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.75, 0.1, 1)
+horizontal_alignment = 1
+
+[node name="UglyEffect" type="Label" parent="SafeMargin/Layout/Cards/UglyCard/UglyContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.5, 0.7, 1.0, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="UglyFlavor" type="Label" parent="SafeMargin/Layout/Cards/UglyCard/UglyContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Cunning & unpredictable.
+Chaos is a ladder."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="UglyPadding" type="Control" parent="SafeMargin/Layout/Cards/UglyCard/UglyContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="BackSpacer" type="Control" parent="SafeMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="BackButton" type="Button" parent="SafeMargin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[node name="BottomSpacer" type="Control" parent="SafeMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+
