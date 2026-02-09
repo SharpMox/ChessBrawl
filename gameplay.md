@@ -6,16 +6,17 @@
 ---
 config:
   flowchart:
-    nodeSpacing: 20
-    rankSpacing: 30
-    padding: 8
+    nodeSpacing: 50
+    rankSpacing: 40
+    padding: 10
   theme: dark
   themeVariables:
     fontSize: 16px
 ---
 flowchart TD
-    Menu(["**MENU** — Start · Quit"]) -- "[Start] button" --> KS(["**KING SELECT** — Good 3pts · Bad 3pts · Ugly 9pts"])
-    KS -- "[Back] button" --> Menu
+    Menu(["**MENU** — Start · Quit"])
+    KS(["**KING SELECT** — Good 3pts · Bad 3pts · Ugly 9pts"])
+    Menu -- "[Start] button" --> KS
     KS -- "Tap a king card" --> PL
 
     subgraph round ["Game Loop — 10 Rounds"]
@@ -51,9 +52,7 @@ flowchart TD
     V(["**VICTORY!** — Stats, Restart · Menu"])
     GO(["**KING DEFEATED!** — Stats, Restart · Menu"])
     V -- "[Restart] button" --> PL
-    V -- "[Menu] button" --> Menu
     GO -- "[Restart] button" --> PL
-    GO -- "[Menu] button" --> Menu
 
     PL -. "[☰] button" .-> Pause
     PT -. "[☰] button" .-> Pause
