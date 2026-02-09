@@ -3,116 +3,69 @@
 ## Game Flow Overview
 
 ```mermaid
+---
+config:
+  flowchart:
+    nodeSpacing: 20
+    rankSpacing: 30
+    padding: 8
+---
 flowchart TD
-    %% ── Menu & King Select ──
-    Menu["**MENU**<br/>Start · Quit"]
-    KingSelect["**KING SELECT**<br/>Good 3pts · Bad 3pts · Ugly 9pts<br/>Back → Menu"]
+    Menu(["**MENU** — Start · Quit"]) -- Start --> KS(["**KING SELECT** — Good 3pts · Bad 3pts · Ugly 9pts"])
+    KS -- Back --> Menu
+    KS -- Pick king --> PL
 
-    Menu -- Start --> KingSelect
-    KingSelect -- Back --> Menu
-    KingSelect -- Pick king --> RoundOverlay
+    PL["**PLACEMENT** — Place King, buy pieces rows 6-7, remove & refund"]
+    PL -- Start Round --> PT
+    PL -. Menu .-> Pause
 
-    %% ── Placement Phase ──
-    RoundOverlay["**ROUND OVERLAY — Placement**<br/>GameState = PLACEMENT<br/><br/>Shows: Round N, wave list preview<br/>Enemies pre-spawned in rows 0-1"]
+    PT["**PLAYER TURN** — 1 play, timer running"]
+    PT -- "Tap/drag piece → move or capture" --> Move["Execute move"]
+    PT -- Skip Turn --> ET
+    PT -- Skip Wave --> WE
+    PT -. Menu .-> Pause
+    Move -- "Capture? +pts, +N pill, shake" --> Move
+    Move -- "Pawn row 0 → promote to Knight/Rook" --> Move
+    Move --> ET
 
-    subgraph placement_actions [" "]
-        direction LR
-        PA1["Place King<br/>required, rows 6-7<br/>round 1 or if lost"]
-        PA2["Buy & place pieces<br/>rows 6-7, costs points"]
-        PA3["Tap placed piece<br/>→ remove & refund<br/>this round only"]
-        PA4["Menu → Pause"]
-        PA5["Start Round<br/>enabled once King<br/>is on board"]
-    end
+    ET["**ENEMY TURN** — AI: 0.3s select + 0.3s move"]
+    ET -- "Capture player piece → flash, shake, loss pill" --> Check
+    ET -- "King captured" --> GO
+    ET -- "No capture / advance" --> Check
+    ET -- "Enemy pawn row 7 → promote" --> Check
 
-    RoundOverlay --- placement_actions
-    PA5 -- Start Round --> PlayerTurn
+    Check{All enemies cleared?}
+    Check -- No --> PT
+    Check -- Yes --> WE{" "}
 
-    %% ── Wave Active: Player Turn ──
-    PlayerTurn["**PLAYER TURN**<br/>1 play per turn · timer running"]
+    WE --> MW{More waves?}
+    MW -- Yes --> WT["**WAVE TRANSITION** — spawn enemies, Start Wave"]
+    WT --> PT
+    MW -- No --> MR{Round < 10?}
+    MR -- Yes --> PL
+    MR -- No --> V
 
-    subgraph player_actions [" "]
-        direction LR
-        P1["Tap piece → show valid moves<br/>Tap valid cell → move/capture<br/>Tap same piece → deselect<br/>Tap elsewhere → deselect"]
-        P2["Drag piece<br/>→ drop on valid cell<br/>ghost preview shown"]
-        P3["Skip Turn<br/>→ end turn, no move"]
-        P4["Skip Wave<br/>→ auto-capture all enemies<br/>earn their points, end wave"]
-        P5["Menu → Pause"]
-    end
+    V(["**VICTORY!** — Stats, Restart · Menu"])
+    GO(["**KING DEFEATED!** — Stats, Restart · Menu"])
+    V -- Restart --> PL
+    V -- Menu --> Menu
+    GO -- Restart --> PL
+    GO -- Menu --> Menu
 
-    PlayerTurn --- player_actions
+    Pause["**PAUSE** — Resume · Finish Wave · Abandon"]
+    Pause -- Resume --> PT
+    Pause -- Finish Wave --> WE
+    Pause -- Abandon --> KS
 
-    subgraph player_effects ["On capture"]
-        direction LR
-        E1["+points added to score"]
-        E2["Floating +N pill"]
-        E3["Shake animation"]
-    end
-
-    PlayerTurn --- player_effects
-    PlayerTurn -- "Pawn reaches row 0" --> PlayerPromo["Auto-promote → Knight or Rook<br/>respawns in player zone rows 6-7"]
-    PlayerPromo --> UsedPlay
-
-    PlayerTurn -- "Play used or Skip Turn" --> UsedPlay{" "}
-    P4 -- Skip Wave --> WaveEnd
-
-    %% ── Wave Active: Enemy Turn ──
-    UsedPlay --> EnemyTurn["**ENEMY TURN — AI**<br/>0.3s select + 0.3s move<br/><br/>Priority:<br/>1. Capture player piece — highest value<br/>2. Advance toward player pieces"]
-
-    subgraph enemy_effects ["On capture of player piece"]
-        direction LR
-        EE1["Red flash + shake"]
-        EE2["'Lost a X' pill"]
-    end
-
-    EnemyTurn --- enemy_effects
-    EnemyTurn -- "Pawn reaches row 7" --> EnemyPromo["Auto-promote → Knight or Rook<br/>respawns in enemy zone rows 0-1"]
-    EnemyPromo --> EnemiesCheck
-    EnemyTurn -- "King captured" --> GameOver
-
-    EnemyTurn --> EnemiesCheck{All enemies cleared?}
-    EnemiesCheck -- No --> PlayerTurn
-    EnemiesCheck -- Yes --> WaveEnd{" "}
-
-    %% ── Wave / Round progression ──
-    WaveEnd --> MoreWaves{More waves in round?}
-    MoreWaves -- Yes --> WaveTransition["**WAVE TRANSITION**<br/>GameState = WAVE_TRANSITION<br/><br/>Shows: Wave N overlay<br/>New enemies spawn in rows 0-1<br/>Start Wave button"]
-    WaveTransition -- Start Wave --> PlayerTurn
-
-    MoreWaves -- No --> MoreRounds{Round < 10?}
-    MoreRounds -- Yes --> RoundOverlay
-    MoreRounds -- No --> Victory
-
-    %% ── End screens ──
-    Victory["**VICTORY!**<br/>Stats: Round, Wave, Moves, Time<br/>Captured & Lost pieces<br/><br/>Restart · Menu"]
-    GameOver["**KING DEFEATED!**<br/>Stats: Round, Wave, Moves, Time<br/>Captured & Lost pieces<br/><br/>Restart · Menu"]
-
-    Victory -- Restart --> RoundOverlay
-    Victory -- Menu --> Menu
-    GameOver -- Restart --> RoundOverlay
-    GameOver -- Menu --> Menu
-
-    %% ── Pause overlay ──
-    Pause["**PAUSE OVERLAY**<br/>Resume · Finish Wave — only during wave · Abandon → King Select"]
-    PA4 --> Pause
-    P5 --> Pause
-    Pause -- Resume --> PlayerTurn
-    Pause -- Finish Wave --> WaveEnd
-    Pause -- Abandon --> KingSelect
-
-    %% ── Styles ──
-    classDef state fill:#2d2d2d,stroke:#666,color:#fff,font-size:13px
-    classDef action fill:#1a3a1a,stroke:#4a4,color:#cfc,font-size:11px
-    classDef effect fill:#1a1a3a,stroke:#44a,color:#ccf,font-size:11px
-    classDef decision fill:#3a3a1a,stroke:#aa4,color:#ffc,font-size:12px
-    classDef endscreen fill:#3a1a1a,stroke:#a44,color:#fcc,font-size:13px
+    classDef state fill:#2d2d2d,stroke:#666,color:#fff
+    classDef decision fill:#3a3a1a,stroke:#aa4,color:#ffc
+    classDef endscreen fill:#3a1a1a,stroke:#a44,color:#fcc
     classDef hidden fill:none,stroke:none,color:none
-
-    class Menu,KingSelect,RoundOverlay,PlayerTurn,EnemyTurn,WaveTransition state
-    class PA1,PA2,PA3,PA4,PA5,P1,P2,P3,P4,P5,PlayerPromo,EnemyPromo action
-    class E1,E2,E3,EE1,EE2 effect
-    class EnemiesCheck,MoreWaves,MoreRounds decision
-    class Victory,GameOver,Pause endscreen
-    class UsedPlay,WaveEnd hidden
+    class PL,PT,ET,WT,Move state
+    class Menu,KS,V,GO endscreen
+    class Check,MW,MR decision
+    class WE hidden
+    class Pause state
 ```
 
 ## Round & Wave Progression
