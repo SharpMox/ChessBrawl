@@ -14,55 +14,53 @@ config:
     fontSize: 16px
 ---
 flowchart TD
-    Menu(["**MENU** — Start · Quit"]) -- Start --> KS(["**KING SELECT** — Good 3pts · Bad 3pts · Ugly 9pts"])
-    KS -- Back --> Menu
-    KS -- Pick king --> PL
+    Menu(["**MENU** — Start · Quit"]) -- "[Start] button" --> KS(["**KING SELECT** — Good 3pts · Bad 3pts · Ugly 9pts"])
+    KS -- "[Back] button" --> Menu
+    KS -- "Tap a king card" --> PL
 
     subgraph round ["Game Loop — 10 Rounds"]
         PL["**PLACEMENT** — Place King, buy pieces rows 6-7, remove & refund"]
-        PL -- Start Round --> PT
+        PL -- "[Start Round] button" --> PT
 
         subgraph wave ["Wave Active"]
             PT["**PLAYER TURN** — 1 play, timer running"]
-            PT -- "Tap/drag piece → move or capture" --> Move["Execute move"]
-            PT -- Skip Turn --> ET
-            PT -- Skip Wave --> WE
-            Move -- "Capture? +pts, +N pill, shake" --> Move
-            Move -- "Pawn row 0 → promote" --> Move
-            Move --> ET
+            PT -- "Tap/drag piece to valid cell" --> Move["Execute move<br/>· Capture: +pts, +N pill, shake<br/>· Pawn row 0: promote to Knight/Rook"]
+            PT -- "[Skip Turn] button" --> ET
+            PT -- "[Skip Wave] button" --> WE
+            Move -- "Turn used" --> ET
 
             ET["**ENEMY TURN** — AI: 0.3s select + 0.3s move"]
-            ET -- "Capture → flash, shake, loss pill" --> Check
-            ET -- "King captured" --> GO
-            ET -- "No capture / advance" --> Check
-            ET -- "Enemy pawn row 7 → promote" --> Check
+            ET -- "AI captures piece" --> Check
+            ET -- "AI captures King" --> GO
+            ET -- "AI moves / advances" --> Check
+            ET -- "AI pawn promotes" --> Check
 
             Check{All enemies cleared?}
-            Check -- No --> PT
-            Check -- Yes --> WE{" "}
+            Check -- No → next turn --> PT
+            Check -- Yes → wave complete --> WE{" "}
         end
 
         WE --> MW{More waves?}
         MW -- Yes --> WT["**WAVE TRANSITION** — spawn enemies, Start Wave"]
-        WT --> PT
+        WT -- "[Start Wave] button" --> PT
         MW -- No --> MR{Round < 10?}
-        MR -- Yes --> PL
+        MR -- Yes → next round --> PL
     end
 
-    MR -- No --> V
+    MR -- No → all rounds cleared --> V
     V(["**VICTORY!** — Stats, Restart · Menu"])
     GO(["**KING DEFEATED!** — Stats, Restart · Menu"])
-    V -- Restart --> PL
-    V -- Menu --> Menu
-    GO -- Restart --> PL
-    GO -- Menu --> Menu
+    V -- "[Restart] button" --> PL
+    V -- "[Menu] button" --> Menu
+    GO -- "[Restart] button" --> PL
+    GO -- "[Menu] button" --> Menu
 
-    PL -. Menu .-> Pause
-    PT -. Menu .-> Pause
+    PL -. "[☰] button" .-> Pause
+    PT -. "[☰] button" .-> Pause
     Pause["**PAUSE** — Resume · Finish Wave · Abandon"]
-    Pause -- Resume --> PT
-    Pause -- Finish Wave --> WE
-    Pause -- Abandon --> KS
+    Pause -- "[Resume] button" --> PT
+    Pause -- "[Finish Wave] button" --> WE
+    Pause -- "[Abandon] button" --> KS
 
     classDef state fill:#2d2d2d,stroke:#666,color:#fff
     classDef decision fill:#3a3a1a,stroke:#aa4,color:#ffc
